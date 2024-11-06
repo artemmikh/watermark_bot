@@ -1,9 +1,9 @@
 from dotenv import load_dotenv
-from telegram.ext import CommandHandler
+from telegram.ext import CommandHandler, MessageHandler, Filters
 
 from bot import const
 from bot.check import check_tokens
-from bot.handlers import wake_up
+from bot.handlers import start_handler, photo_handler
 from logger import logger
 
 load_dotenv()
@@ -18,9 +18,11 @@ def main():
     try:
         logger.info('Регистрация обработчиков')
         const.UPDATER.dispatcher.add_handler(
-            CommandHandler('start', wake_up))
+            CommandHandler('start', start_handler))
+        const.UPDATER.dispatcher.add_handler(
+            MessageHandler(Filters.photo, photo_handler))
 
-        logger.info('запуск процесса polling')
+        logger.info('Запуск процесса polling')
         const.UPDATER.start_polling()
         const.UPDATER.idle()
 
