@@ -20,7 +20,7 @@ def main():
         const.UPDATER.dispatcher.add_handler(
             CommandHandler('start', start_handler))
         const.UPDATER.dispatcher.add_handler(
-            MessageHandler(Filters.photo, photo_handler))
+            MessageHandler(Filters.document, photo_handler))
 
         logger.info('Запуск процесса polling')
         const.UPDATER.start_polling()

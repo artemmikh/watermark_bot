@@ -1,4 +1,4 @@
-from bot.utils import send_message
+from bot.utils import send_message, add_watermark
 
 
 def start_handler(update, context):
@@ -9,4 +9,7 @@ def start_handler(update, context):
 
 
 def photo_handler(update, context):
-    send_message(update, context, message=f'Вы отправили изображение')
+    send_message(update, context, message='Ожидайте ⌛️')
+    add_watermark(update, context)
+    send_message(update, context, message=f'Вы отправили изображение как '
+                                          f'документ')
