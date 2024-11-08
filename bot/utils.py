@@ -5,51 +5,39 @@ from PIL import ImageDraw
 from logger import logger
 
 
-def send_message(update, context, message):
+def send_message(update, context, message=None, file_path=None):
     """Отправляет сообщение в Telegram чат."""
     try:
         chat = update.effective_chat
-        context.bot.send_message(chat.id, message)
-        logger.debug(f'Сообщение успешно отправлено в Telegram: {message}')
+        if file_path is not None:
+            with open(file_path, 'rb') as photo:
+                context.bot.send_document(chat_id=chat.id, document=photo)
+            logger.debug(f'Документ успешно отправлен в чат {chat}')
+        else:
+            context.bot.send_message(chat.id, message)
+            logger.debug(f'Сообщение успешно отправлено в Telegram: {message}')
     except Exception as error:
         logger.error(f'Сбой при отправке сообщения в Telegram: {error}')
 
 
+def download_user_file(update, context):
+    """Загружает в /images изображение присланное пользователем."""
+    file = context.bot.get_file(update.message.document.file_id)
+    file_path = 'images/down_image.jpg'
+    file.download(file_path)
+    return file_path
+
+
 def add_watermark(update, context):
     """Добавляет водяной знак на изображение и отправляет его обратно в Telegram."""
-    try:
-        # файл, присланный в чат
-        file = context.bot.get_file(update.message.document.file_id)
+    user_file_path = download_user_file(update, context)
+    watermarked_file_path = "images/watermarked_image.png"
 
-        # файл локально
-        file_path = 'received_image.jpg'
-        file.download(file_path)
-
-        # Открываю изображение и добавляю водяной знак
-        img = Image.open(file_path).convert("RGB")  # в режим RGB
-        draw = ImageDraw.Draw(img)
-
-        # Настройки текста водяного знака
-        watermark_text = "Sample Watermark"
-        font = ImageFont.load_default()  # шрифт по умолчанию
-        text_position = (50, 90)  # Позиция текста
-        text_color = (255, 255, 255)  # Цвет текста
-
-        # водяной знак
-        draw.text(text_position, watermark_text, fill=text_color, font=font)
-
-        # изображение в формат JPEG
-        watermarked_path = 'watermarked_image.jpg'
-        img.save(watermarked_path, "JPEG")
-
-        # обратно изображение с водяным знаком
-        chat_id = update.effective_chat.id
-        with open(watermarked_path, 'rb') as photo:
-            context.bot.send_document(chat_id=chat_id, document=photo)
-
-        logger.debug(
-            f'Изображение с водяным знаком успешно отправлено в чат {chat_id}')
-
-    except Exception as error:
-        logger.error(f'Ошибка при добавлении водяного знака: {error}')
-        send_message(update, context, "Не удалось обработать изображение.")
+    with Image.open(user_file_path).convert("RGBA") as base:
+        txt = Image.new("RGBA", base.size, (255, 255, 255, 0))
+        fnt = ImageFont.load_default(100)
+        d = ImageDraw.Draw(txt)
+        d.text((10, 10), "Hello", font=fnt, fill=(255, 255, 255, 64))
+        out = Image.alpha_composite(base, txt)
+        out.save('images/watermarked_image.png', 'PNG')
+    return watermarked_file_path
