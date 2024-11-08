@@ -3,6 +3,7 @@ from telegram.ext import CommandHandler, MessageHandler, Filters
 
 from bot import const
 from bot.check import check_tokens
+from bot.db import session
 from bot.handlers import start_handler, document_handler, photo_handler
 from logger import logger
 
@@ -27,6 +28,7 @@ def main():
         logger.info('Запуск процесса polling')
         const.UPDATER.start_polling()
         const.UPDATER.idle()
+        session.close()
 
     except Exception as error:
         message = f'Сбой в работе программы: {error}'

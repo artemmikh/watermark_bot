@@ -33,7 +33,8 @@
 
     ```dotenv
     TELEGRAM_TOKEN=ваш_токен
-    ```
+    BOT_DATABASE_URL=sqlite:///../watermark_bot.db
+   ```
 
 4. **Запуск бота:**
 
