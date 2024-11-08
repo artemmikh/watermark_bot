@@ -3,7 +3,7 @@ from telegram.ext import CommandHandler, MessageHandler, Filters
 
 from bot import const
 from bot.check import check_tokens
-from bot.handlers import start_handler, photo_handler
+from bot.handlers import start_handler, document_handler, photo_handler
 from logger import logger
 
 load_dotenv()
@@ -20,7 +20,9 @@ def main():
         const.UPDATER.dispatcher.add_handler(
             CommandHandler('start', start_handler))
         const.UPDATER.dispatcher.add_handler(
-            MessageHandler(Filters.document, photo_handler))
+            MessageHandler(Filters.document, document_handler))
+        const.UPDATER.dispatcher.add_handler(
+            MessageHandler(Filters.photo, photo_handler))
 
         logger.info('Запуск процесса polling')
         const.UPDATER.start_polling()
