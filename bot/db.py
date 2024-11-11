@@ -21,6 +21,7 @@ Base = declarative_base()
 class UserSettings(Base):
     __tablename__ = 'user_settings'
     id = Column(Integer, primary_key=True)
+    text = Column(Text, default='NOT FOR DISTRIBUTION')
     chat_id = Column(Integer, unique=True, nullable=False)
     transparency = Column(Integer, default=64)
     front_size = Column(Integer, default=20)

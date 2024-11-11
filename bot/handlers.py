@@ -5,8 +5,9 @@ from bot.utils import send_message, add_watermark, remove_images
 def start_handler(update, context):
     """Обработчик команды /start. Отправляет приветственное сообщение с
     информацией."""
-    send_message(update, context, message='Добро пожаловать! Отправьте мне '
-                                          'изображение файлом.')
+    send_message(update, context,
+                 message='Добро пожаловать! Отправьте мне '
+                         'изображение файлом в формате PNG или JPEG. ')
 
 
 def photo_handler(update, context):
@@ -27,5 +28,4 @@ def document_handler(update, context):
         logger.error(f'Ошибка при добавлении водяного знака: {error}')
         send_message(update, context,
                      'Не удалось обработать изображение. '
-                     'Вы можете отправить изображение в форматах PNG или JPEG')
-    remove_images(watermarked_file_path, user_file_path)
+                     'Вы можете отправить изображение в формате PNG или JPEG')
