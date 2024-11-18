@@ -1,7 +1,6 @@
 import const
-from exceptions import (
-    NoEnvironmentVariables
-)
+from exceptions import NoEnvironmentVariables
+
 from logger import logger
 
 

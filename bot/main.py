@@ -2,11 +2,11 @@ from dotenv import load_dotenv
 from telegram.ext import CommandHandler, MessageHandler, Filters, \
     CallbackQueryHandler
 
-from bot import const
-from bot.check import check_tokens
-from bot.const import SETTINGS_TEXT
-from bot.db import session
-from bot.handlers import (
+import const
+from check import check_tokens
+from const import SETTINGS_TEXT
+from db import session
+from handlers import (
     start_handler, document_handler, photo_handler,
     settings_handler, handle_user_input, user_choice_settings_handler)
 from logger import logger

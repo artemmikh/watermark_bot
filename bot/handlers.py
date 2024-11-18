@@ -1,12 +1,12 @@
 from telegram import (ReplyKeyboardMarkup, InlineKeyboardButton,
                       InlineKeyboardMarkup)
 
-from bot.const import SETTINGS_TEXT
-from bot.db import UserSettings, session
-from bot.logger import logger
-from bot.utils import (send_message, add_watermark, remove_images,
-                       check_user_exists, validate_user_input,
-                       update_user_setting)
+from const import SETTINGS_TEXT
+from db import UserSettings, session
+from logger import logger
+from utils import (send_message, add_watermark, remove_images,
+                   check_user_exists, validate_user_input,
+                   update_user_setting)
 
 
 def start_handler(update, context):
