@@ -9,7 +9,7 @@ from db import session, UserSettings
 load_dotenv()
 
 
-def send_message(update, context, message=None, file_path=None):
+def send_message(update, context, message=None, file_path=None, buttons=None):
     """Отправляет сообщение в Telegram чат."""
     try:
         chat = update.effective_chat
@@ -18,7 +18,7 @@ def send_message(update, context, message=None, file_path=None):
                 context.bot.send_document(chat_id=chat.id, document=photo)
             logger.debug(f'Документ успешно отправлен в чат {chat}')
         else:
-            context.bot.send_message(chat.id, message)
+            context.bot.send_message(chat.id, message, reply_markup=buttons)
             logger.debug(f'Сообщение успешно отправлено в Telegram: {message}')
     except Exception as error:
         logger.error(f'Сбой при отправке сообщения в Telegram: {error}')
@@ -80,3 +80,41 @@ def add_watermark(update, context):
         out.save(watermarked_file_path,
                  os.getenv('FORMAT_WATERMARKED_IMAGE', 'PNG'))
     return watermarked_file_path, user_file_path
+
+
+def validate_user_input(current_setting, user_input):
+    """Проверяет корректность введённого значения."""
+    try:
+        if current_setting == 'transparency':
+            value = int(user_input)
+            if not (0 <= value <= 255):
+                raise ValueError("Прозрачность должна быть от 0 до 255.")
+        elif current_setting == 'front_size':
+            value = int(user_input)
+            if not (10 <= value <= 100):
+                raise ValueError("Размер шрифта должен быть от 10 до 100.")
+        elif current_setting in ['position_x', 'position_y']:
+            value = int(user_input)
+        elif current_setting == 'text':
+            value = user_input
+        else:
+            raise ValueError("Неизвестная настройка.")
+        return value
+    except ValueError as e:
+        raise ValueError(f"Ошибка ввода: {e}")
+
+
+def update_user_setting(chat_id, current_setting, value):
+    """Обновляет значение настройки в базе данных."""
+    try:
+        user = session.query(UserSettings).filter_by(chat_id=chat_id).first()
+        if not user:
+            user = UserSettings(chat_id=chat_id)
+            session.add(user)
+
+        setattr(user, current_setting, value)
+        session.commit()
+        return True
+    except Exception as error:
+        logger.error(f"Ошибка обновления настройки в базе: {error}")
+        raise Exception("Произошла ошибка при сохранении в базу.")
