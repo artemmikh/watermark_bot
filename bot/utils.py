@@ -3,7 +3,7 @@ import os
 from PIL import Image, ImageDraw, ImageFont
 from dotenv import load_dotenv
 
-from bot.const import BASE_DIR
+from const import BASE_DIR
 from logger import logger
 from db import session, UserSettings
 
