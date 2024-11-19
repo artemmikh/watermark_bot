@@ -3,6 +3,7 @@ import os
 from PIL import Image, ImageDraw, ImageFont
 from dotenv import load_dotenv
 
+from bot.const import BASE_DIR
 from logger import logger
 from db import session, UserSettings
 
@@ -27,7 +28,7 @@ def send_message(update, context, message=None, file_path=None, buttons=None):
 def download_user_file(update, context):
     """Загружает в /temp изображение присланное пользователем."""
     file = context.bot.get_file(update.message.document.file_id)
-    file_path = os.getenv('USER_FILE_PATH')
+    file_path = os.path.join(BASE_DIR, os.getenv('USER_FILE_PATH'))
     file.download(file_path)
     return file_path
 
@@ -67,7 +68,9 @@ def get_user_settings(update, context):
 def add_watermark(update, context):
     """Добавляет водяной знак на изображение."""
     user_file_path = download_user_file(update, context)
-    watermarked_file_path = os.getenv('WATERMARKED_FILE_PATH')
+    watermarked_file_path = os.path.join(
+        BASE_DIR,
+        os.getenv('WATERMARKED_FILE_PATH'))
     (transparency, front_size, position_x, position_y,
      watermark_text) = get_user_settings(update, context)
     with Image.open(user_file_path).convert('RGBA') as base:

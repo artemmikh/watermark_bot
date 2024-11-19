@@ -10,3 +10,4 @@ TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 BOT = telegram.Bot(token=TELEGRAM_TOKEN)
 UPDATER = Updater(token=TELEGRAM_TOKEN, use_context=True)
 SETTINGS_TEXT = 'Настройки'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
